@@ -2,13 +2,13 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-      "aiHubName": {
+      "amlName": {
         "value": "GEN-UNIQUE-8"
       },
-      "aiHubFriendlyName": {
+      "amlFriendlyName": {
         "value": "Demo AI resource"
       },
-      "aiHubDescription": {
+      "amlDescription": {
         "value": "This is an example AI resource for use in Azure AI Studio."
       },
       "tags": {

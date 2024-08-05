@@ -7,13 +7,13 @@ param location string
 param tags object
 
 @description('AI hub name')
-param aiHubName string
+param amlWorkspaceName string
 
 @description('AI hub display name')
-param aiHubFriendlyName string = aiHubName
+param amlWorkspaceFriendlyName string = amlWorkspaceName
 
 @description('AI hub description')
-param aiHubDescription string
+param amlWorkspaceDescription string
 
 @description('Resource ID of the application insights resource for storing diagnostics logs')
 param applicationInsightsId string
@@ -42,13 +42,13 @@ param subnetResourceId string
 @description('Unique Suffix used for name generation')
 param uniqueSuffix string
 
-var privateEndpointName = '${aiHubName}-AIHub-PE'
+var privateEndpointName = '${amlWorkspaceName}-amlWorkspace-PE'
 var targetSubResource = [
     'amlworkspace'
 ]
 
-resource aiHub 'Microsoft.MachineLearningServices/workspaces@2023-10-01' = {
-  name: aiHubName
+resource amlWorkspace 'Microsoft.MachineLearningServices/workspaces@2023-10-01' = {
+  name: amlWorkspaceName
   location: location
   tags: tags
   identity: {
@@ -56,8 +56,8 @@ resource aiHub 'Microsoft.MachineLearningServices/workspaces@2023-10-01' = {
   }
   properties: {
     // organization
-    friendlyName: aiHubFriendlyName
-    description: aiHubDescription
+    friendlyName: amlWorkspaceFriendlyName
+    description: amlWorkspaceDescription
 
     // dependent resources
     keyVault: keyVaultId
@@ -74,10 +74,10 @@ resource aiHub 'Microsoft.MachineLearningServices/workspaces@2023-10-01' = {
     // private link settings
     sharedPrivateLinkResources: []
   }
-  kind: 'hub'
+  kind: 'Default'
 
   resource aiServicesConnection 'connections@2024-01-01-preview' = {
-    name: '${aiHubName}-connection-AIServices'
+    name: '${amlWorkspaceName}-connection-AIServices'
     properties: {
       category: 'AIServices'
       target: aiServicesTarget
@@ -101,12 +101,12 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2023-11-01' = {
     subnet: {
       id: subnetResourceId
     }
-    customNetworkInterfaceName: '${aiHubName}-nic-${uniqueSuffix}'
+    customNetworkInterfaceName: '${amlWorkspaceName}-nic-${uniqueSuffix}'
     privateLinkServiceConnections: [
       {
-        name: aiHubName
+        name: amlWorkspaceName
         properties: {
-          privateLinkServiceId: aiHub.id
+          privateLinkServiceId: amlWorkspace.id
           groupIds: targetSubResource
         }
       }
@@ -155,7 +155,7 @@ resource vnetLinkNotebooks 'Microsoft.Network/privateDnsZones/virtualNetworkLink
 
 
 
-resource dnsZoneGroupAiHub 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-11-01' = {
+resource dnsZoneGroupamlWorkspace 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-11-01' = {
   parent: privateEndpoint
   name: 'default'
   properties: {
@@ -180,4 +180,4 @@ resource dnsZoneGroupAiHub 'Microsoft.Network/privateEndpoints/privateDnsZoneGro
   ]
 }
 
-output aiHubID string = aiHub.id
+output amlWorkspaceID string = amlWorkspace.id

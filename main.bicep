@@ -4,13 +4,13 @@
 @minLength(2)
 @maxLength(12)
 @description('Name for the AI resource and used to derive name of dependent resources.')
-param aiHubName string = 'demo'
+param amlName string = 'demo'
 
 @description('Friendly name for your Azure AI resource')
-param aiHubFriendlyName string = 'Demo AI resource'
+param amlFriendlyName string = 'Demo AI resource'
 
 @description('Description of your Azure AI resource displayed in AI studio')
-param aiHubDescription string = 'This is an example AI resource for use in Azure AI Studio.'
+param amlDescription string = 'This is an example AI resource for use in Azure AI Studio.'
 
 @description('Set of tags to apply to all resources.')
 param tags object = {}
@@ -33,7 +33,7 @@ param location string = resourceGroup().location
 param prefix string
 
 // Variables
-var name = toLower('${aiHubName}')
+var name = toLower('${amlName}')
 
 // Create a short, unique suffix, that will be unique to each resource group
 var uniqueSuffix = substring(uniqueString(resourceGroup().id), 0, 7)
@@ -53,13 +53,13 @@ module aiDependencies 'modules/dependent-resources.bicep' = {
   }
 }
 
-module aiHub 'modules/ai-hub.bicep' = {
+module amlWorkspace 'modules/aml-workspace.bicep' = {
   name: 'ai-${name}-${uniqueSuffix}-deployment'
   params: {
     // workspace organization
-    aiHubName: 'aih-${name}-${uniqueSuffix}'
-    aiHubFriendlyName: aiHubFriendlyName
-    aiHubDescription: aiHubDescription
+    amlWorkspaceName: 'aml-${name}-${uniqueSuffix}'
+    amlWorkspaceFriendlyName: amlFriendlyName
+    amlWorkspaceDescription: amlDescription
     location: location
     tags: tags
 
